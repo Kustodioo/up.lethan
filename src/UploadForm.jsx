@@ -1,6 +1,6 @@
 // src/components/UploadForm.jsx
-import { useState } from "react";
-import Clipboard from 'clipboard'; // Adiciona o Clipboard.js
+import React, { useState, useEffect } from "react";
+import Clipboard from 'clipboard';
 
 function UploadForm() {
   const [clientName, setClientName] = useState("");
@@ -14,6 +14,24 @@ function UploadForm() {
   });
   const [sharedLink, setSharedLink] = useState("");
   const [copySuccess, setCopySuccess] = useState("");
+
+  useEffect(() => {
+    // Configurar Clipboard.js quando o componente é montado
+    const clipboard = new Clipboard('.copy-button', {
+      text: () => sharedLink,
+    });
+
+    clipboard.on('success', () => {
+      setCopySuccess("Link copiado com sucesso!");
+    });
+
+    clipboard.on('error', () => {
+      setCopySuccess("Falha ao copiar o link.");
+    });
+
+    // Limpar configuração do Clipboard.js quando o componente é desmontado
+    return () => clipboard.destroy();
+  }, [sharedLink]);
 
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
@@ -83,19 +101,6 @@ function UploadForm() {
       alert("Falha ao enviar os arquivos. Por favor, tente novamente.");
     }
   };
-
-  // Instancia o Clipboard.js e associa ao botão copiar
-  const clipboard = new Clipboard('.copy-button', {
-    text: () => sharedLink,
-  });
-
-  clipboard.on('success', () => {
-    setCopySuccess("Link copiado com sucesso!");
-  });
-
-  clipboard.on('error', () => {
-    setCopySuccess("Falha ao copiar o link.");
-  });
 
   return (
     <div className="upload-container">
