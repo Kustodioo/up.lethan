@@ -70,9 +70,13 @@ function UploadForm() {
       const result = await response.json();
       console.log("Response from server:", result);  // Log da resposta
 
-      alert("Arquivos enviados com sucesso!");
-      setSharedLink(result.sharedLink);  // Atualiza o estado com o link
-      setCopySuccess("");
+      if (result.sharedLink) {
+        setSharedLink(result.sharedLink);  // Atualiza o estado com o link
+        alert("Arquivos enviados com sucesso!");
+      } else {
+        alert("Erro: Link de compartilhamento não encontrado na resposta.");
+      }
+      setCopySuccess("");  // Reseta a mensagem de sucesso de cópia
     } catch (error) {
       console.error("Erro ao enviar arquivos:", error);
       alert("Falha ao enviar os arquivos. Por favor, tente novamente.");
@@ -127,6 +131,7 @@ function UploadForm() {
         </form>
         {sharedLink && (
           <div className="shared-link">
+            <p>Link de compartilhamento:</p>
             <input type="text" value={sharedLink} readOnly className="link-text" />
             <button onClick={handleCopyLink} className="copy-button">Copiar</button>
             {copySuccess && <p className="copy-success">{copySuccess}</p>}
