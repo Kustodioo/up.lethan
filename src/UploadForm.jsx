@@ -68,7 +68,7 @@ function UploadForm() {
       }
 
       const result = await response.json();
-      console.log("Response from server:", result);  // Log da resposta
+      console.log("Response from server:", result);  // Log da resposta para depuração
 
       if (result.sharedLink) {
         setSharedLink(result.sharedLink);  // Atualiza o estado com o link
@@ -132,8 +132,10 @@ function UploadForm() {
         {sharedLink && (
           <div className="shared-link">
             <p>Link de compartilhamento:</p>
-            <input type="text" value={sharedLink} readOnly className="link-text" />
-            <button onClick={handleCopyLink} className="copy-button">Copiar</button>
+            <div className="link-container">
+              <input type="text" value={sharedLink} readOnly className="link-text" />
+              <button onClick={handleCopyLink} className="copy-button">Copiar</button>
+            </div>
             {copySuccess && <p className="copy-success">{copySuccess}</p>}
           </div>
         )}
