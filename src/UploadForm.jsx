@@ -35,7 +35,7 @@ function UploadForm() {
     const formData = new FormData();
     formData.append("clientName", clientName);
 
-    // Renomear e adicionar arquivos ao FormData
+    // Adiciona arquivos ao FormData
     Object.entries(files).forEach(([key, file]) => {
       if (file) {
         if (Array.isArray(file)) {
@@ -68,10 +68,10 @@ function UploadForm() {
       }
 
       const result = await response.json();
-      console.log("Response text:", result);
+      console.log("Response from server:", result);  // Log da resposta
 
       alert("Arquivos enviados com sucesso!");
-      setSharedLink(result.sharedLink);
+      setSharedLink(result.sharedLink);  // Atualiza o estado com o link
       setCopySuccess("");
     } catch (error) {
       console.error("Erro ao enviar arquivos:", error);
