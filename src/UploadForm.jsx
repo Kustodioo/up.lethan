@@ -58,7 +58,7 @@ function UploadForm() {
     });
 
     try {
-      const response = await fetch("http://localhost:3000/api/upload", {
+      const response = await fetch("https://up-lethan.onrender.com/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -71,8 +71,8 @@ function UploadForm() {
       console.log("Response text:", result);
 
       alert("Arquivos enviados com sucesso!");
-      setSharedLink(result.sharedLink); // Armazena o link compartilhado no estado
-      setCopySuccess(""); // Limpa a mensagem de sucesso ao obter novo link
+      setSharedLink(result.sharedLink);
+      setCopySuccess("");
     } catch (error) {
       console.error("Erro ao enviar arquivos:", error);
       alert("Falha ao enviar os arquivos. Por favor, tente novamente.");

@@ -1,4 +1,3 @@
-// Importações de módulos
 import express from "express";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -18,11 +17,11 @@ const __dirname = dirname(__filename);
 const app = express();
 app.use(cors());
 
-const ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN; // Token seguro via .env
+const ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN; // Use variáveis de ambiente para segurança
 
 if (!ACCESS_TOKEN) {
   console.error("Erro: Access token do Dropbox não encontrado.");
-  process.exit(1); // Encerra se o token não estiver presente
+  process.exit(1);
 }
 
 const dbx = new Dropbox({ accessToken: ACCESS_TOKEN, fetch });
@@ -34,12 +33,11 @@ if (!fs.existsSync(uploadDir)) {
   console.log(`Diretório criado: ${uploadDir}`);
 }
 
-// Rota para upload de arquivos
 app.post("/api/upload", (req, res) => {
   const form = formidable({
-    uploadDir, // Diretório para salvar arquivos
-    keepExtensions: true, // Manter extensões dos arquivos
-    multiples: true, // Permitir múltiplos arquivos
+    uploadDir,
+    keepExtensions: true,
+    multiples: true,
   });
 
   form.parse(req, async (err, fields, files) => {
@@ -51,7 +49,6 @@ app.post("/api/upload", (req, res) => {
     const clientName = fields.clientName || "Cliente";
 
     try {
-      // Iterar sobre os arquivos e enviá-los para o Dropbox
       for (const key in files) {
         const fileArray = Array.isArray(files[key]) ? files[key] : [files[key]];
         for (const file of fileArray) {
@@ -79,7 +76,6 @@ app.post("/api/upload", (req, res) => {
         }
       }
 
-      // Verifique se há um link de compartilhamento existente
       let sharedLinkResponse;
       try {
         const links = await dbx.sharingListSharedLinks({
@@ -91,7 +87,6 @@ app.post("/api/upload", (req, res) => {
           sharedLinkResponse = links.result.links[0];
           console.log("Link de compartilhamento existente encontrado:", sharedLinkResponse.url);
         } else {
-          // Criar link de compartilhamento se não existir
           sharedLinkResponse = await dbx.sharingCreateSharedLinkWithSettings({
             path: `/${clientName}`,
             settings: {
@@ -101,7 +96,6 @@ app.post("/api/upload", (req, res) => {
           console.log("Link de compartilhamento criado:", sharedLinkResponse.result.url);
         }
 
-        // Enviar o link de compartilhamento de volta para o cliente
         res.status(200).json({
           message: "Arquivos enviados com sucesso!",
           sharedLink: sharedLinkResponse.url,
