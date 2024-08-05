@@ -1,5 +1,6 @@
 // src/components/UploadForm.jsx
 import { useState } from "react";
+import Clipboard from 'clipboard'; // Adiciona o Clipboard.js
 
 function UploadForm() {
   const [clientName, setClientName] = useState("");
@@ -68,7 +69,7 @@ function UploadForm() {
       }
 
       const result = await response.json();
-      console.log("Response from server:", result);  // Log da resposta
+      console.log("Response from server:", result);  // Log da resposta para depuração
 
       if (result.sharedLink) {
         setSharedLink(result.sharedLink);  // Atualiza o estado com o link
@@ -83,11 +84,18 @@ function UploadForm() {
     }
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(sharedLink)
-      .then(() => setCopySuccess("Link copiado com sucesso!"))
-      .catch((err) => console.error("Erro ao copiar o link:", err));
-  };
+  // Instancia o Clipboard.js e associa ao botão copiar
+  const clipboard = new Clipboard('.copy-button', {
+    text: () => sharedLink,
+  });
+
+  clipboard.on('success', () => {
+    setCopySuccess("Link copiado com sucesso!");
+  });
+
+  clipboard.on('error', () => {
+    setCopySuccess("Falha ao copiar o link.");
+  });
 
   return (
     <div className="upload-container">
@@ -132,8 +140,10 @@ function UploadForm() {
         {sharedLink && (
           <div className="shared-link">
             <p>Link de compartilhamento:</p>
-            <input type="text" value={sharedLink} readOnly className="link-text" />
-            <button onClick={handleCopyLink} className="copy-button">Copiar</button>
+            <div className="link-container">
+              <input type="text" value={sharedLink} readOnly className="link-text" />
+              <button className="copy-button">Copiar</button>
+            </div>
             {copySuccess && <p className="copy-success">{copySuccess}</p>}
           </div>
         )}

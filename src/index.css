@@ -1,9 +1,9 @@
-/* Estilos básicos para o corpo e container */
+/* src/index.css */
 body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Use min-height para garantir que a página se estenda para o conteúdo */
+  min-height: 100vh;
   margin: 0;
   background-color: #2c2c2c;
   color: #fff;
@@ -13,7 +13,7 @@ body {
 
 .upload-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Certifica-se de que o conteúdo esteja empilhado verticalmente */
   justify-content: center;
   align-items: center;
   width: 90%; /* Ajusta para responsividade */
