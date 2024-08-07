@@ -22,8 +22,8 @@ function UploadForm() {
 
   // Define a URL do backend com base no ambiente
   const backendUrl = process.env.NODE_ENV === 'production'
-    ? 'https://up-lethan-3e1fb1p3-douglas-custodios-projects.vercel.app' // URL do backend no Vercel
-    : 'http://localhost:3000'; // URL local para desenvolvimento
+  ? 'https://up-lethan-3e1fb1p3-douglas-custodios-projects.vercel.app' // Atualize com sua URL do backend no Vercel
+  : 'http://localhost:3000'; // URL local para desenvolvimento
 
   useEffect(() => {
     const clipboard = new Clipboard(".copy-button", {
