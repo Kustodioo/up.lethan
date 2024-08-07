@@ -21,6 +21,11 @@ function UploadForm() {
   const [uploadProgress, setUploadProgress] = useState(0); // Estado para progresso do upload
   const [darkMode, setDarkMode] = useState(false); // Estado para o tema escuro/claro
 
+  // Define a URL do backend com base no ambiente
+  const backendUrl = process.env.NODE_ENV === 'production'
+    ? 'https://up-lethan-backend.onrender.com'
+    : 'http://localhost:3000';
+
   useEffect(() => {
     const clipboard = new Clipboard(".copy-button", {
       text: () => sharedLink,
@@ -39,13 +44,16 @@ function UploadForm() {
 
   useEffect(() => {
     // Busca o token CSRF do servidor
-    fetch("http://localhost:3000/csrf-token")
+    fetch(`${backendUrl}/csrf-token`, {
+      method: 'GET',
+      credentials: 'include',
+    })
       .then((res) => res.json())
       .then((data) => {
         setCsrfToken(data.csrfToken);
       })
       .catch((err) => console.error("Erro ao buscar token CSRF:", err));
-  }, []);
+  }, [backendUrl]);
 
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
@@ -95,13 +103,14 @@ function UploadForm() {
     });
 
     try {
-      setIsUploading(true); // Inicia o indicador de progresso
-      setUploadStatus(""); // Reseta a mensagem de status anterior
+      setIsUploading(true);
+      setUploadStatus("");
 
       // Monitoramento de progresso usando XMLHttpRequest
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", "http://localhost:3000/api/upload", true);
+      xhr.open("POST", `${backendUrl}/api/upload`, true);
       xhr.setRequestHeader("X-CSRF-Token", csrfToken);
+      xhr.withCredentials = true; // Certifique-se de enviar cookies
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const percentCompleted = Math.round(
@@ -112,11 +121,11 @@ function UploadForm() {
       };
 
       xhr.onload = () => {
-        setIsUploading(false); // Finaliza o indicador de progresso
+        setIsUploading(false);
         if (xhr.status === 200) {
           const result = JSON.parse(xhr.responseText);
           setSharedLink(result.sharedLink);
-          setUploadStatus("Arquivos enviados com sucesso!"); // Define a mensagem de sucesso
+          setUploadStatus("Arquivos enviados com sucesso!");
           setCopySuccess("");
         } else {
           throw new Error("Erro no envio do formulário");
@@ -127,7 +136,7 @@ function UploadForm() {
         setIsUploading(false);
         setUploadStatus(
           "Falha ao enviar os arquivos. Por favor, tente novamente."
-        ); // Define a mensagem de erro
+        );
       };
 
       xhr.send(formData);
@@ -135,8 +144,8 @@ function UploadForm() {
       console.error("Erro ao enviar arquivos:", error);
       setUploadStatus(
         "Falha ao enviar os arquivos. Por favor, tente novamente."
-      ); // Define a mensagem de erro
-      setIsUploading(false); // Finaliza o indicador de progresso em caso de erro
+      );
+      setIsUploading(false);
     }
   };
 
