@@ -1,58 +1,55 @@
-// server.js
-
 import express from 'express';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import fs from 'fs';
-import cors from 'cors';
-import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import formidable from 'formidable';
 import { Dropbox } from 'dropbox';
 import fetch from 'node-fetch';
-import formidable from 'formidable';
-import dotenv from 'dotenv';
-import { v4 as uuidv4 } from 'uuid';
-import cookieParser from 'cookie-parser';
-import csrf from 'csurf';
 import { renewAccessToken } from './tokenManager.js';
+import csrf from 'csurf';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+const uploadsDir = path.join(__dirname, 'uploads');
+
+// Certifique-se de que o diretório de uploads existe
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Configuração do CORS
 app.use(cors({
-  origin: [
-    'https://up-lethan-frontend.onrender.com', // URL do frontend em produção
-    'http://localhost:3001', // URL local para desenvolvimento
-  ],
-  credentials: true, // Permite o envio de cookies
-  methods: ['GET', 'POST'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'X-CSRF-Token'], // Cabeçalhos permitidos
+  origin: 'http://localhost:3001', // URL do frontend local
+  credentials: true,
 }));
 
-app.use(helmet());
 app.use(cookieParser());
 
+// Configuração do middleware CSRF
 const csrfProtection = csrf({ cookie: true });
 app.use(csrfProtection);
 
-let accessToken = process.env.DROPBOX_ACCESS_TOKEN;
-
+// Endpoint para obter o token CSRF
 app.get('/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
+// Endpoint para upload de arquivos
 app.post('/api/upload', csrfProtection, async (req, res) => {
   try {
-    // Renova o token de acesso e cria uma nova instância de Dropbox
-    accessToken = await renewAccessToken();
+    const accessToken = await renewAccessToken();
     const dbx = new Dropbox({ accessToken, fetch });
 
     const form = formidable({
-      uploadDir: `${__dirname}/uploads`,
+      uploadDir: uploadsDir,
       keepExtensions: true,
       multiples: true,
     });
@@ -70,7 +67,7 @@ app.post('/api/upload', csrfProtection, async (req, res) => {
         for (const file of fileArray) {
           const oldPath = file.filepath;
           const newFileName = `${uuidv4()}_${file.originalFilename}`;
-          const newPath = `${__dirname}/uploads/${newFileName}`;
+          const newPath = path.join(uploadsDir, newFileName);
 
           fs.renameSync(oldPath, newPath);
           console.log(`Arquivo movido para: ${newPath}`);

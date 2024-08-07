@@ -1,4 +1,4 @@
-// server/tokenManager.js
+// tokenManager.js
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 
@@ -24,7 +24,9 @@ export async function renewAccessToken() {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to renew access token');
+      const errorBody = await response.text();
+      console.error('Erro da API do Dropbox:', errorBody);
+      throw new Error(`Falha ao renovar o token de acesso. Status: ${response.status}`);
     }
 
     const data = await response.json();
@@ -33,7 +35,7 @@ export async function renewAccessToken() {
     // Retorne o novo token para uso imediato
     return data.access_token;
   } catch (error) {
-    console.error('Erro ao renovar o token de acesso:', error);
+    console.error('Erro ao renovar o token de acesso:', error.message);
     throw error;
   }
 }

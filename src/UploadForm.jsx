@@ -49,7 +49,12 @@ function UploadForm() {
       method: 'GET',
       credentials: 'include', // Importante para incluir cookies
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Error: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         setCsrfToken(data.csrfToken);
       })
@@ -87,7 +92,7 @@ function UploadForm() {
         if (Array.isArray(file)) {
           file.forEach((f, index) => {
             formData.append(
-              "files",
+              `${key}[${index}]`,
               new File(
                 [f],
                 `${clientName}_${key}_${index + 1}.${f.name.split(".").pop()}`
@@ -96,7 +101,7 @@ function UploadForm() {
           });
         } else {
           formData.append(
-            "files",
+            key,
             new File([file], `${clientName}_${key}.${file.name.split(".").pop()}`)
           );
         }
