@@ -1,6 +1,7 @@
 // src/components/UploadForm.jsx
 import React, { useState, useEffect } from "react";
 import Clipboard from "clipboard";
+import { appVersion } from "./config/version"; // Atualize o caminho para dentro de src
 
 function UploadForm() {
   const [clientName, setClientName] = useState("");
@@ -214,6 +215,8 @@ function UploadForm() {
             {copySuccess && <p className="copy-success">{copySuccess}</p>}
           </div>
         )}
+        {/* Exibindo a versão do aplicativo abaixo do formulário */}
+        <p className="app-version">Versão do App: {appVersion}</p>
       </div>
     </div>
   );

@@ -251,4 +251,9 @@ button:hover {
   button {
     padding: 10px;
   }
+  .app-version {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #ccc;
+  }
 }
