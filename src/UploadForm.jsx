@@ -23,8 +23,8 @@ function UploadForm() {
 
   // Define a URL do backend com base no ambiente
   const backendUrl = process.env.NODE_ENV === 'production'
-    ? 'https://up-lethan-backend.onrender.com'
-    : 'http://localhost:3000';
+    ? 'https://up-lethan.onrender.com' // URL do backend no Render
+    : 'http://localhost:3000'; // URL local para desenvolvimento
 
   useEffect(() => {
     const clipboard = new Clipboard(".copy-button", {
