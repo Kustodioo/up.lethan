@@ -140,3 +140,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+git add server/server.js src/components/UploadForm.jsx
+git commit -m "Atualizar configuração de CORS e URL do backend"
