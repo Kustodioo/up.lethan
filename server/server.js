@@ -21,13 +21,15 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-// Configuração CORS
+// Configuração do CORS
 app.use(cors({
   origin: [
-    'http://localhost:3001', // Localhost para desenvolvimento
-    'https://up-lethan-frontend.onrender.com', // Frontend hospedado
+    'https://up-lethan-frontend.onrender.com', // Domínio do frontend hospedado
+    'http://localhost:3001', // Domínio local para desenvolvimento
   ],
   credentials: true, // Permitir envio de cookies
+  methods: ['GET', 'POST'], // Métodos HTTP permitidos
+  allowedHeaders: ['Content-Type', 'X-CSRF-Token'], // Cabeçalhos permitidos
 }));
 
 app.use(helmet());
