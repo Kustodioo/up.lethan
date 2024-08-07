@@ -1,4 +1,5 @@
 // src/components/UploadForm.jsx
+
 import React, { useState, useEffect } from "react";
 import Clipboard from "clipboard";
 import { appVersion } from "./config/version";
@@ -21,6 +22,7 @@ function UploadForm() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
 
+  // Define a URL do backend com base no ambiente
   const backendUrl = process.env.NODE_ENV === 'production'
     ? 'https://up-lethan.onrender.com' // URL do backend no Render
     : 'http://localhost:3000'; // URL local para desenvolvimento
@@ -105,9 +107,10 @@ function UploadForm() {
       setIsUploading(true);
       setUploadStatus("");
 
+      // Monitoramento de progresso usando XMLHttpRequest
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `${backendUrl}/api/upload`, true);
-      xhr.setRequestHeader("X-CSRF-Token", csrfToken); // Envia o token CSRF
+      xhr.setRequestHeader("X-CSRF-Token", csrfToken); // Certifique-se de enviar o token CSRF
       xhr.withCredentials = true; // Importante para enviar cookies
 
       xhr.upload.onprogress = (event) => {
