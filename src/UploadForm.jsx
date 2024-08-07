@@ -1,7 +1,7 @@
 // src/components/UploadForm.jsx
 import React, { useState, useEffect } from "react";
 import Clipboard from "clipboard";
-import { appVersion } from "./config/version"; // Atualize o caminho para dentro de src
+import { appVersion } from "./config/version";
 
 function UploadForm() {
   const [clientName, setClientName] = useState("");
@@ -15,13 +15,12 @@ function UploadForm() {
   });
   const [sharedLink, setSharedLink] = useState("");
   const [copySuccess, setCopySuccess] = useState("");
-  const [uploadStatus, setUploadStatus] = useState(""); // Estado para notificações de status
-  const [isUploading, setIsUploading] = useState(false); // Estado para o indicador de progresso
-  const [csrfToken, setCsrfToken] = useState(""); // Estado para o token CSRF
-  const [uploadProgress, setUploadProgress] = useState(0); // Estado para progresso do upload
-  const [darkMode, setDarkMode] = useState(false); // Estado para o tema escuro/claro
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [darkMode, setDarkMode] = useState(false);
 
-  // Define a URL do backend com base no ambiente
   const backendUrl = process.env.NODE_ENV === 'production'
     ? 'https://up-lethan.onrender.com' // URL do backend no Render
     : 'http://localhost:3000'; // URL local para desenvolvimento
@@ -106,10 +105,9 @@ function UploadForm() {
       setIsUploading(true);
       setUploadStatus("");
 
-      // Monitoramento de progresso usando XMLHttpRequest
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `${backendUrl}/api/upload`, true);
-      xhr.setRequestHeader("X-CSRF-Token", csrfToken); // Certifique-se de enviar o token CSRF
+      xhr.setRequestHeader("X-CSRF-Token", csrfToken); // Envia o token CSRF
       xhr.withCredentials = true; // Importante para enviar cookies
 
       xhr.upload.onprogress = (event) => {

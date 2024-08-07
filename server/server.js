@@ -21,14 +21,14 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-// Configuração do CORS para permitir solicitações do frontend
+// Configuração do CORS
 app.use(cors({
   origin: [
     'https://up-lethan-frontend.onrender.com', // URL do frontend em produção
-    'http://localhost:3001', // URL do frontend em desenvolvimento local
+    'http://localhost:3001', // URL local para desenvolvimento
   ],
-  credentials: true, // Permitir envio de cookies
-  methods: ['GET', 'POST'], // Métodos HTTP permitidos
+  credentials: true, // Permite o envio de cookies
+  methods: ['GET', 'POST'], // Métodos permitidos
   allowedHeaders: ['Content-Type', 'X-CSRF-Token'], // Cabeçalhos permitidos
 }));
 
@@ -46,7 +46,7 @@ app.get('/csrf-token', csrfProtection, (req, res) => {
 
 app.post('/api/upload', csrfProtection, async (req, res) => {
   try {
-    // Renove o token de acesso e crie uma nova instância de Dropbox
+    // Renova o token de acesso e cria uma nova instância de Dropbox
     accessToken = await renewAccessToken();
     const dbx = new Dropbox({ accessToken, fetch });
 
