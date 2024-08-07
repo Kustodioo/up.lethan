@@ -1,5 +1,3 @@
-// src/components/UploadForm.jsx
-
 import React, { useState, useEffect } from "react";
 import Clipboard from "clipboard";
 import { appVersion } from "./config/version";
@@ -24,7 +22,7 @@ function UploadForm() {
 
   // Define a URL do backend com base no ambiente
   const backendUrl = process.env.NODE_ENV === 'production'
-    ? 'https://up-lethan.onrender.com' // URL do backend no Render
+    ? 'https://up-lethan-3e1fb1p3-douglas-custodios-projects.vercel.app' // URL do backend no Vercel
     : 'http://localhost:3000'; // URL local para desenvolvimento
 
   useEffect(() => {

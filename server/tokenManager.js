@@ -1,14 +1,10 @@
-// tokenManager.js
+import { Dropbox } from 'dropbox';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const clientId = process.env.DROPBOX_CLIENT_ID;
-const clientSecret = process.env.DROPBOX_CLIENT_SECRET;
-const refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
-
-export async function renewAccessToken() {
+const renewAccessToken = async () => {
   try {
     const response = await fetch('https://api.dropboxapi.com/oauth2/token', {
       method: 'POST',
@@ -17,25 +13,22 @@ export async function renewAccessToken() {
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: clientId,
-        client_secret: clientSecret,
+        refresh_token: process.env.DROPBOX_REFRESH_TOKEN,
+        client_id: process.env.DROPBOX_CLIENT_ID,
+        client_secret: process.env.DROPBOX_CLIENT_SECRET,
       }),
     });
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Erro da API do Dropbox:', errorBody);
-      throw new Error(`Falha ao renovar o token de acesso. Status: ${response.status}`);
+      throw new Error(`Failed to renew access token. Status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Novo Access Token:', data.access_token);
-
-    // Retorne o novo token para uso imediato
     return data.access_token;
   } catch (error) {
-    console.error('Erro ao renovar o token de acesso:', error.message);
+    console.error('Error renewing access token:', error);
     throw error;
   }
-}
+};
+
+export { renewAccessToken };

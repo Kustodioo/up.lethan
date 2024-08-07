@@ -18,7 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, '../uploads');
 
 // Certifique-se de que o diretório de uploads existe
 if (!fs.existsSync(uploadsDir)) {
@@ -27,7 +27,7 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Configuração do CORS
 app.use(cors({
-  origin: 'http://localhost:3001', // URL do frontend local
+  origin: process.env.NODE_ENV === 'production' ? 'https://up-lethan-3e1fb1p3-douglas-custodios-projects.vercel.app' : 'http://localhost:3001',
   credentials: true,
 }));
 
