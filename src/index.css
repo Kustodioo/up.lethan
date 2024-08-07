@@ -13,16 +13,16 @@ body {
 
 .upload-container {
   display: flex;
-  flex-direction: column; /* Certifica-se de que o conteúdo esteja empilhado verticalmente */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 90%; /* Ajusta para responsividade */
+  width: 90%;
   max-width: 800px;
   padding: 20px;
   border-radius: 20px;
   background: linear-gradient(45deg, #007BFF, #FFD700);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  margin: 20px; /* Espaço ao redor para telas menores */
+  margin: 20px;
 }
 
 .form-box {
@@ -36,19 +36,19 @@ body {
 
 .logo {
   display: block;
-  max-width: 200px; /* Ajusta o tamanho para dispositivos menores */
+  max-width: 200px;
   margin: 0 auto 30px;
 }
 
 h1 {
   margin-bottom: 10px;
-  font-size: 24px;
+  font-size: 2rem; /* Unidades relativas */
   color: #fff;
 }
 
 h2 {
   margin-bottom: 20px;
-  font-size: 16px;
+  font-size: 1rem;
   color: #ccc;
 }
 
@@ -74,7 +74,7 @@ form {
   color: #ddd;
 }
 
-input[type="text"] {
+input[type="text"], .link-text {
   padding: 10px;
   border: 1px solid #555;
   border-radius: 5px;
@@ -136,19 +136,7 @@ button:hover {
   align-items: center;
   justify-content: center;
   margin-top: 10px;
-  flex-wrap: wrap; /* Permite quebra de linha para responsividade */
-}
-
-.link-text {
-  flex-grow: 1;
-  padding: 8px;
-  border: 1px solid #555;
-  border-radius: 5px;
-  margin-right: 10px;
-  background-color: #444;
-  color: #fff;
-  width: calc(100% - 100px); /* Ajusta o tamanho em relação ao botão */
-  margin-bottom: 10px; /* Adiciona margem inferior para espaço */
+  flex-wrap: wrap;
 }
 
 .copy-button {
@@ -159,8 +147,8 @@ button:hover {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 100px; /* Tamanho fixo para o botão */
-  margin-top: 10px; /* Espaço acima para consistência */
+  width: 100px;
+  margin-top: 10px;
 }
 
 .copy-button:hover {
@@ -172,45 +160,95 @@ button:hover {
   margin-top: 5px;
 }
 
-/* Media queries para responsividade */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+  margin: 20px auto;
+}
+
+.progress-bar {
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress {
+  height: 10px;
+  background-color: #007bff;
+  width: 0;
+  transition: width 0.3s;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.upload-status {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #ffeb3b;
+  text-align: center;
+}
+
+.dark-theme {
+  background-color: #000;
+  color: #fff;
+}
+
+.light-theme {
+  background-color: #fff;
+  color: #000;
+}
+
 @media (max-width: 768px) {
   .logo {
-    max-width: 150px; /* Reduz o tamanho da logo em tablets */
+    max-width: 150px;
   }
 
   button {
-    font-size: 14px; /* Ajusta tamanho do texto do botão */
+    font-size: 14px;
   }
 
   .link-container {
-    flex-direction: column; /* Coloca link e botão em colunas em telas menores */
-    align-items: stretch; /* Alinha itens ao longo do eixo flexível */
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .link-text {
-    width: 100%; /* Link ocupa 100% da largura disponível */
-    margin-right: 0; /* Remove margem direita em telas menores */
+    width: 100%;
+    margin-right: 0;
   }
 
   .copy-button {
-    width: 100%; /* Botão ocupa 100% da largura disponível */
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .logo {
-    max-width: 120px; /* Reduz ainda mais a logo em smartphones */
+    max-width: 120px;
   }
 
   h1 {
-    font-size: 20px; /* Ajusta tamanho do título em smartphones */
+    font-size: 20px;
   }
 
   h2 {
-    font-size: 14px; /* Ajusta subtítulo em smartphones */
+    font-size: 14px;
   }
 
   button {
-    padding: 10px; /* Reduz o padding do botão */
+    padding: 10px;
   }
 }

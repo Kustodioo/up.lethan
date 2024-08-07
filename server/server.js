@@ -4,11 +4,14 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import fs from "fs";
 import cors from "cors";
+import helmet from "helmet";
 import { Dropbox } from "dropbox";
 import fetch from "node-fetch";
 import formidable from "formidable";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid"; // Para gerar identificadores únicos
+import cookieParser from "cookie-parser";
+import csrf from "csurf";
 
 dotenv.config();
 
@@ -17,6 +20,12 @@ const __dirname = dirname(__filename);
 
 const app = express();
 app.use(cors());
+app.use(helmet()); // Adiciona segurança via cabeçalhos HTTP
+app.use(cookieParser());
+
+// Configuração de proteção CSRF
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
 
 const ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
 
@@ -34,7 +43,11 @@ if (!fs.existsSync(uploadDir)) {
   console.log(`Diretório criado: ${uploadDir}`);
 }
 
-app.post("/api/upload", (req, res) => {
+app.get('/csrf-token', csrfProtection, (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
+app.post("/api/upload", csrfProtection, (req, res) => {
   const form = formidable({
     uploadDir,
     keepExtensions: true,

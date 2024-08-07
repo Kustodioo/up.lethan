@@ -1,6 +1,6 @@
 // src/components/UploadForm.jsx
 import React, { useState, useEffect } from "react";
-import Clipboard from 'clipboard';
+import Clipboard from "clipboard";
 
 function UploadForm() {
   const [clientName, setClientName] = useState("");
@@ -14,24 +14,37 @@ function UploadForm() {
   });
   const [sharedLink, setSharedLink] = useState("");
   const [copySuccess, setCopySuccess] = useState("");
+  const [uploadStatus, setUploadStatus] = useState(""); // Estado para notificações de status
+  const [isUploading, setIsUploading] = useState(false); // Estado para o indicador de progresso
+  const [csrfToken, setCsrfToken] = useState(""); // Estado para o token CSRF
+  const [uploadProgress, setUploadProgress] = useState(0); // Estado para progresso do upload
+  const [darkMode, setDarkMode] = useState(false); // Estado para o tema escuro/claro
 
   useEffect(() => {
-    // Configurar Clipboard.js quando o componente é montado
-    const clipboard = new Clipboard('.copy-button', {
+    const clipboard = new Clipboard(".copy-button", {
       text: () => sharedLink,
     });
 
-    clipboard.on('success', () => {
+    clipboard.on("success", () => {
       setCopySuccess("Link copiado com sucesso!");
     });
 
-    clipboard.on('error', () => {
+    clipboard.on("error", () => {
       setCopySuccess("Falha ao copiar o link.");
     });
 
-    // Limpar configuração do Clipboard.js quando o componente é desmontado
     return () => clipboard.destroy();
   }, [sharedLink]);
+
+  useEffect(() => {
+    // Busca o token CSRF do servidor
+    fetch("http://localhost:3000/csrf-token")
+      .then((res) => res.json())
+      .then((data) => {
+        setCsrfToken(data.csrfToken);
+      })
+      .catch((err) => console.error("Erro ao buscar token CSRF:", err));
+  }, []);
 
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
@@ -49,12 +62,16 @@ function UploadForm() {
     }));
   };
 
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-theme", !darkMode);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("clientName", clientName);
 
-    // Adiciona arquivos ao FormData
     Object.entries(files).forEach(([key, file]) => {
       if (file) {
         if (Array.isArray(file)) {
@@ -77,35 +94,58 @@ function UploadForm() {
     });
 
     try {
-      const response = await fetch("https://up-lethan.onrender.com/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      setIsUploading(true); // Inicia o indicador de progresso
+      setUploadStatus(""); // Reseta a mensagem de status anterior
 
-      if (!response.ok) {
-        throw new Error("Erro no envio do formulário");
-      }
+      // Monitoramento de progresso usando XMLHttpRequest
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://localhost:3000/api/upload", true);
+      xhr.setRequestHeader("X-CSRF-Token", csrfToken);
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentCompleted = Math.round(
+            (event.loaded * 100) / event.total
+          );
+          setUploadProgress(percentCompleted);
+        }
+      };
 
-      const result = await response.json();
-      console.log("Response from server:", result);  // Log da resposta para depuração
+      xhr.onload = () => {
+        setIsUploading(false); // Finaliza o indicador de progresso
+        if (xhr.status === 200) {
+          const result = JSON.parse(xhr.responseText);
+          setSharedLink(result.sharedLink);
+          setUploadStatus("Arquivos enviados com sucesso!"); // Define a mensagem de sucesso
+          setCopySuccess("");
+        } else {
+          throw new Error("Erro no envio do formulário");
+        }
+      };
 
-      if (result.sharedLink) {
-        setSharedLink(result.sharedLink);  // Atualiza o estado com o link
-        alert("Arquivos enviados com sucesso!");
-      } else {
-        alert("Erro: Link de compartilhamento não encontrado na resposta.");
-      }
-      setCopySuccess("");  // Reseta a mensagem de sucesso de cópia
+      xhr.onerror = () => {
+        setIsUploading(false);
+        setUploadStatus(
+          "Falha ao enviar os arquivos. Por favor, tente novamente."
+        ); // Define a mensagem de erro
+      };
+
+      xhr.send(formData);
     } catch (error) {
       console.error("Erro ao enviar arquivos:", error);
-      alert("Falha ao enviar os arquivos. Por favor, tente novamente.");
+      setUploadStatus(
+        "Falha ao enviar os arquivos. Por favor, tente novamente."
+      ); // Define a mensagem de erro
+      setIsUploading(false); // Finaliza o indicador de progresso em caso de erro
     }
   };
 
   return (
-    <div className="upload-container">
+    <div className={`upload-container ${darkMode ? "dark-theme" : "light-theme"}`}>
       <div className="form-box">
         <img src="/logo.png" alt="Logo" className="logo" />
+        <button onClick={toggleTheme}>
+          {darkMode ? "Modo Claro" : "Modo Escuro"}
+        </button>
         <form onSubmit={handleSubmit}>
           <h1>Upload de Documentos</h1>
           <h2>Faça o upload dos documentos para análise</h2>
@@ -115,6 +155,7 @@ function UploadForm() {
             onChange={(e) => setClientName(e.target.value)}
             placeholder="Nome do Cliente"
             required
+            aria-label="Nome do Cliente"
           />
           <div className="upload-group">
             <label>CPF:</label>
@@ -130,24 +171,45 @@ function UploadForm() {
           </div>
           <div className="upload-group">
             <label>Conta de Energia:</label>
-            <input type="file" onChange={(e) => handleFileChange(e, "energyBill")} />
+            <input
+              type="file"
+              onChange={(e) => handleFileChange(e, "energyBill")}
+            />
           </div>
           <div className="upload-group">
             <label>Celular e E-mail:</label>
-            <input type="file" onChange={(e) => handleFileChange(e, "phoneEmail")} />
+            <input
+              type="file"
+              onChange={(e) => handleFileChange(e, "phoneEmail")}
+            />
           </div>
           <div className="upload-group">
             <label>Documentos Adicionais:</label>
             <input type="file" multiple onChange={handleAdditionalDocsChange} />
           </div>
-          <button type="submit">Enviar</button>
+          <button
+            type="submit"
+            disabled={isUploading}
+            aria-label="Enviar Formulário"
+          >
+            {isUploading ? "Enviando..." : "Enviar"}
+          </button>
+          {isUploading && (
+            <div className="progress-bar">
+              <div
+                className="progress"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+          )}
         </form>
+        {uploadStatus && <p className="upload-status">{uploadStatus}</p>}
         {sharedLink && (
           <div className="shared-link">
             <p>Link de compartilhamento:</p>
             <div className="link-container">
               <input type="text" value={sharedLink} readOnly className="link-text" />
-              <button className="copy-button">Copiar</button>
+              <button className="copy-button" aria-label="Copiar Link">Copiar</button>
             </div>
             {copySuccess && <p className="copy-success">{copySuccess}</p>}
           </div>
