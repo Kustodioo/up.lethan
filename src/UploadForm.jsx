@@ -46,7 +46,7 @@ function UploadForm() {
     // Busca o token CSRF do servidor
     fetch(`${backendUrl}/csrf-token`, {
       method: 'GET',
-      credentials: 'include',
+      credentials: 'include', // Importante para incluir cookies
     })
       .then((res) => res.json())
       .then((data) => {
@@ -109,8 +109,9 @@ function UploadForm() {
       // Monitoramento de progresso usando XMLHttpRequest
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `${backendUrl}/api/upload`, true);
-      xhr.setRequestHeader("X-CSRF-Token", csrfToken);
-      xhr.withCredentials = true; // Certifique-se de enviar cookies
+      xhr.setRequestHeader("X-CSRF-Token", csrfToken); // Certifique-se de enviar o token CSRF
+      xhr.withCredentials = true; // Importante para enviar cookies
+
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const percentCompleted = Math.round(

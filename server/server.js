@@ -21,11 +21,11 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-// Configuração do CORS
+// Configuração do CORS para permitir solicitações do frontend
 app.use(cors({
   origin: [
-    'https://up-lethan-frontend.onrender.com', // Domínio do frontend hospedado
-    'http://localhost:3001', // Domínio local para desenvolvimento
+    'https://up-lethan-frontend.onrender.com', // URL do frontend em produção
+    'http://localhost:3001', // URL do frontend em desenvolvimento local
   ],
   credentials: true, // Permitir envio de cookies
   methods: ['GET', 'POST'], // Métodos HTTP permitidos
