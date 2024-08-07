@@ -1,1 +1,21 @@
-node_modules
+# dependencies
+/node_modules
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore the .env file
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+.env
