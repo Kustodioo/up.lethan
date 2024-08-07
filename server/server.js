@@ -26,8 +26,22 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Configuração do CORS
+const allowedOrigins = [
+  'http://localhost:3001', // URL do frontend local
+  'https://up-lethan-3e1fb1p3-douglas-custodios-projects.vercel.app',
+  'https://up-lethan-b1z9e0hce-douglas-custodios-projects.vercel.app',
+  'https://up-lethan.vercel.app', // Nova URL adicionada
+  // Adicione outras URLs conforme necessário
+];
+
 app.use(cors({
-  origin: ['http://localhost:3001', 'https://up-lethan-paa53psuo-douglas-custodios-projects.vercel.app'], // Adicione seu domínio Vercel aqui
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
