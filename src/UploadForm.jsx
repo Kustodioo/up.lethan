@@ -22,10 +22,8 @@ function UploadForm() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Define a URL do backend com base no ambiente
-  const backendUrl = process.env.NODE_ENV === 'production'
-    ? 'http://57.129.43.169:3000' // IP do servidor no ambiente de produção
-    : 'http://localhost:3000'; // URL local para desenvolvimento
+  // Define a URL do backend diretamente para o servidor em produção
+  const backendUrl = 'http://57.129.43.169:3000'; // Substitua este IP pelo seu IP ou domínio de produção
 
   useEffect(() => {
     const clipboard = new Clipboard(".copy-button", {
