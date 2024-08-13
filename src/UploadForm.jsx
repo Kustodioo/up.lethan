@@ -24,7 +24,7 @@ function UploadForm() {
 
   // Define a URL do backend com base no ambiente
   const backendUrl = process.env.NODE_ENV === 'production'
-    ? 'https://up-lethan.onrender.com' // URL do backend no Render
+    ? 'http://57.129.43.169:3000' // IP do servidor no ambiente de produção
     : 'http://localhost:3000'; // URL local para desenvolvimento
 
   useEffect(() => {
