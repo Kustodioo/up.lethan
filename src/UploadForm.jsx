@@ -22,8 +22,8 @@ function UploadForm() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Define a URL do backend diretamente para o servidor em produção
-  const backendUrl = 'http://57.129.43.169:3000/'; // Substitua este IP pelo seu IP ou domínio de produção
+  // Define a URL do backend diretamente para o servidor em produção, sem barra extra
+  const backendUrl = 'http://57.129.43.169:3000'; // Sem a barra final
 
   useEffect(() => {
     const clipboard = new Clipboard(".copy-button", {
@@ -43,7 +43,7 @@ function UploadForm() {
 
   useEffect(() => {
     // Busca o token CSRF do servidor
-    fetch('http://57.129.43.169:3000/csrf-token', {
+    fetch(`${backendUrl}/csrf-token`, {
       credentials: 'include'
     })
       .then((res) => {
