@@ -79,77 +79,25 @@ function UploadForm() {
     document.body.classList.toggle("dark-theme", !darkMode);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const formData = new FormData();
-    formData.append("clientName", clientName);
-
-    Object.entries(files).forEach(([key, file]) => {
-      if (file) {
-        if (Array.isArray(file)) {
-          file.forEach((f, index) => {
-            formData.append(
-              `${key}[${index}]`,
-              new File(
-                [f],
-                `${clientName}_${key}_${index + 1}.${f.name.split(".").pop()}`
-              )
-            );
-          });
-        } else {
-          formData.append(
-            key,
-            new File([file], `${clientName}_${key}.${file.name.split(".").pop()}`)
-          );
-        }
-      }
-    });
-
+    formData.append('file', file);
+  
     try {
-      setIsUploading(true);
-      setUploadStatus("");
-
-      // Monitoramento de progresso usando XMLHttpRequest
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", `${backendUrl}/api/upload`, true);
-      xhr.setRequestHeader("X-CSRF-Token", csrfToken); // Certifique-se de enviar o token CSRF
-      xhr.withCredentials = true; // Importante para enviar cookies
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percentCompleted = Math.round(
-            (event.loaded * 100) / event.total
-          );
-          setUploadProgress(percentCompleted);
-        }
-      };
-
-      xhr.onload = () => {
-        setIsUploading(false);
-        if (xhr.status === 200) {
-          const result = JSON.parse(xhr.responseText);
-          setSharedLink(result.sharedLink);
-          setUploadStatus("Arquivos enviados com sucesso!");
-          setCopySuccess("");
-        } else {
-          throw new Error("Erro no envio do formulário");
-        }
-      };
-
-      xhr.onerror = () => {
-        setIsUploading(false);
-        setUploadStatus(
-          "Falha ao enviar os arquivos. Por favor, tente novamente."
-        );
-      };
-
-      xhr.send(formData);
+      const response = await fetch('http://57.129.43.169:3000/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erro no envio do formulário');
+      }
+  
+      const result = await response.json();
+      console.log('Sucesso:', result);
     } catch (error) {
-      console.error("Erro ao enviar arquivos:", error);
-      setUploadStatus(
-        "Falha ao enviar os arquivos. Por favor, tente novamente."
-      );
-      setIsUploading(false);
+      console.error('Erro:', error);
     }
   };
 
