@@ -43,9 +43,8 @@ function UploadForm() {
 
   useEffect(() => {
     // Busca o token CSRF do servidor
-    fetch(`${backendUrl}/csrf-token`, {
-      method: 'GET',
-      credentials: 'include', // Importante para incluir cookies
+    fetch('http://57.129.43.169:3000/csrf-token', {
+      credentials: 'include'
     })
       .then((res) => {
         if (!res.ok) {
