@@ -27,7 +27,7 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Configuração do CORS
 app.use(cors({
-  origin: ['http://localhost:3001', 'http://57.129.43.169:3001'], // Adicione as URLs permitidas aqui
+  origin: 'http://57.129.43.169:3001', // URL do seu frontend
   credentials: true,
 }));
 
