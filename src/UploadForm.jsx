@@ -58,20 +58,17 @@ function UploadForm() {
       .catch((err) => console.error("Erro ao buscar token CSRF:", err));
   }, [backendUrl]);
 
-  const handleFileChange = (e, field) => {
-    const file = e.target.files[0];
-    setFiles((prevFiles) => ({
-      ...prevFiles,
-      [field]: file,
-    }));
+  const handleFileChange = (event) => {
+      const file = event.target.files[0];
+      setFile(file);
   };
-
-  const handleAdditionalDocsChange = (e) => {
-    const filesArray = Array.from(e.target.files);
-    setFiles((prevFiles) => ({
-      ...prevFiles,
-      additionalDocs: filesArray,
-    }));
+  
+  const handleAdditionalDocsChange = (event) => {
+      const filesArray = Array.from(event.target.files);
+      setFiles((prevFiles) => ({
+          ...prevFiles,
+          additionalDocs: filesArray,
+      }));
   };
 
   const toggleTheme = () => {
