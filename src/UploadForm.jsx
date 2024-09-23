@@ -23,7 +23,7 @@ function UploadForm() {
   const [darkMode, setDarkMode] = useState(false);
 
   // Define a URL do backend diretamente para o servidor em produção
-  const backendUrl = 'http://localhost:3000'; // Substitua este IP pelo seu IP ou domínio de produção
+  const backendUrl = 'http://57.129.43.169:3000/'; // Substitua este IP pelo seu IP ou domínio de produção
 
   useEffect(() => {
     const clipboard = new Clipboard(".copy-button", {
